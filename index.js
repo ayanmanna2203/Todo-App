@@ -20,8 +20,13 @@ const todoinput = document.querySelector("#todoinput")
 const todoList = document.querySelector("#todoList")
 // const btn = document.querySelector("button")
 const formBtn = document.querySelector("#form-btn")
+const taskCount = document.querySelector("#task-count")
+const completeCount = document.querySelector("#complete-count")
 
 let editTodoid = null;
+
+
+
 
 todoForm.addEventListener('submit', (e) => {
     e.preventDefault()
@@ -62,6 +67,9 @@ todoForm.addEventListener('submit', (e) => {
     
 
 })
+
+
+
 function rendertodo() {
     todoList.innerHTML = ""
     todos.forEach(function (todo) {
@@ -82,7 +90,7 @@ function addtodo(todo) {
     li.innerHTML = `
       <div class="flex gap-2  flex-wrap ">
                         <input data-action="toggle" type="checkbox" ${todo.isCompleted === true ? 'checked' : ''} data-id=${todo.id}>
-                        <p>${todo.text}</p>
+                        <p class="flex-1 ${todo.isCompleted ? "line-through":""} ">${todo.text}</p>
                         </div>
                         <div class="flex gap-2 flex-wrap">
                             <button data-action="edit" data-id=${todo.id}>Edit</button>
@@ -91,16 +99,19 @@ function addtodo(todo) {
     `
 
     todoList.append(li)
+    taskCount.textContent = `TASKS(${todos.length})`
+    completeCount.textContent = `COMPLETED:${todos.filter((todo)=> todo.isCompleted).length}`
+
 }
 
 todoList.addEventListener('click', (e) => {
     let li = e.target.closest('li')
     let btn = e.target.closest('button')
-    let action = btn?.dataset.action;
-    let id = btn?.dataset.id;
-    let checkbox = e.target.closest('input[type ="checkbox"]')
-    
-    console.log(checkbox);
+    let action = e.target.dataset.action;
+    let id = li.dataset.id;
+    let checkbox= e.target.closest('input[type ="checkbox"]')
+    // console.log(id);
+    // console.log(checkbox);
 
     if (action === "edit") {
         // console.log("editing...");
@@ -115,6 +126,7 @@ todoList.addEventListener('click', (e) => {
         // formBtn.textContent ="update"
 
         startEdit(id)
+        // formBtn.textContent="Add"
 
     }
     if (action === "delete") {
@@ -122,7 +134,8 @@ todoList.addEventListener('click', (e) => {
         // rendertodo();
     }
 
-    if (checkbox) {
+    if (action === "toggle") {
+        // console.log(action);
         todos = todos.map((todo) => {
             if (todo.id === Number(id)) {
                 return {
@@ -135,8 +148,9 @@ todoList.addEventListener('click', (e) => {
             return todo;
 
         })
-
-        console.log(todos);
+        rendertodo()
+        // formBtn.textContent="Add"
+        // console.log(todos);
     }
 })
 
